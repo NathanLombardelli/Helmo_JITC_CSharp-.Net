@@ -1,0 +1,53 @@
+﻿@using JITC.Models.ViewModel
+@model ReservationViewModel
+
+
+<h1>Vol en départ de @Model.Depart.Name le @Model.Vol.DepartPrevu et arriver à @Model.Arriver.Name le @Model.Vol.ArriverPrevu</h1>
+
+<div class="d-flex justify-content-around">
+
+    <div class="mt-5">
+        <h2>Information Helicopter :</h2>
+
+        <p>Name : @Model.Vol.Helicopter.Name</p>
+        <p>Motor : @Model.Vol.Helicopter.Motor</p>
+        <p>Speed : @Model.Vol.Helicopter.Speed</p>
+        <p>Capacity : @Model.Vol.Helicopter.Capacity</p>
+    </div>
+
+
+    <div class="mt-5">
+        <h2>Information Pilote :</h2>
+
+        <p>Name : @Model.Vol.Pilote.Surname @Model.Vol.Pilote.Name</p>
+        <p>Email : @Model.Vol.Pilote.Email</p>
+
+    </div>
+
+</div>
+
+<h2 class="mt-5">Réserver le vol :</h2>
+
+@if (@Model.PlaceDisponible > 0)
+{
+    <p>nombre de place disponible : @Model.PlaceDisponible / @Model.Vol.Helicopter.Capacity</p>
+    <form asp-controller="Vol" asp-action="Reservation" method="post">
+        <input hidden value="@Model.PlaceDisponible" name="nbrDispo" />
+        <input hidden value="@Model.Vol.Id" name="VolID" />
+
+        <p>Place(s) : </p>
+
+        <div class="d-flex">
+            <input type="number" class="me-3" name="nbrRes" />
+            <button type="submit">Réserver</button>
+        </div>
+    </form>
+}
+else
+{
+
+    <h2 class="text-danger">Vol complet</h2>
+
+}
+<h2 class="text-danger mt-5">@Model.Error</h2>
+<h2 class="text-success mt-5">@Model.Success</h2>

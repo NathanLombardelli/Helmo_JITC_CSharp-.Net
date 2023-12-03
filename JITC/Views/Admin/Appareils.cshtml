@@ -1,0 +1,55 @@
+﻿@using JITC.Models.ViewModel
+
+@model AppareilsViewModel
+
+<h1 class="mb-5">Appreils</h1>
+
+<h2 class="mb-5">En réparation</h2>
+
+@foreach (var heli in @Model.Helicopters)
+{
+
+    @if (heli.Statut == "réparation")
+    {
+        <div class="d-flex mb-2">
+            <p>@heli.Name Capacity : @heli.Capacity Motor: @heli.Motor Speed: @heli.Speed</p>
+
+            <form asp-controller="Admin" asp-action="SortirReparation" method="post">
+
+                <input value="@heli.Id" name="IdHelico" hidden />
+                <button type="submit" class="ms-2">Sortir de réparation</button>
+
+            </form>
+
+        </div>
+    }
+
+}
+
+<h2 class="mb-5">À envoyer en réparation</h2>
+
+@foreach (var heli in @Model.Helicopters)
+{
+    @if (heli.Statut == "A Réviser")
+    {
+        <div class="d-flex mb-2">
+            <p>@heli.Name Capacity : @heli.Capacity Motor: @heli.Motor Speed: @heli.Speed</p>
+
+            <form asp-controller="Admin" asp-action="MettreReparation" method="post">
+                <input value="@heli.Id" name="IdHelico" hidden />
+                <button type="submit" class="ms-2">Mettre en réparation</button>
+            </form>
+
+        </div>
+    }
+}
+
+<h2 class="mb-5">Paré au décollage</h2>
+
+@foreach (var heli in @Model.Helicopters)
+{
+    @if (heli.Statut == "ok")
+    {
+        <p>@heli.Name Capacity : @heli.Capacity Motor: @heli.Motor Speed: @heli.Speed</p>
+    }
+}

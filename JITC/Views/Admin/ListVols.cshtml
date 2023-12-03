@@ -1,0 +1,324 @@
+﻿@using JITC.Models.ViewModel
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+@model ListVolsViewModel
+
+<h1>ListVols</h1>
+
+<div class="d-flex flex-column" data-toggle="modal" data-target="#staticBackdrop creation">
+    <div class="d-flex justify-content-end align-items-md-center"> <button class="fs-3"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un vol</button></div>
+</div>
+
+<h2 class="text-danger">@Model.Error</h2>
+
+<!-- Modal Creation-->
+<div class="modal fade " id="staticBackdrop creation" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content text-black">
+            <div class="modal-header flex-column-reverse">
+                <h1 class="modal-title" id="staticBackdropLabel">Création d'un vol</h1>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-controller="Admin" asp-action="CreateVol" method="post">
+
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+
+
+
+                        <div class="d-flex justify-content-center align-content-center align-items-center">
+                            <p class="me-3">
+                                Départ de
+                                <input list="Aeroport" type="text" name="aero_depart" class=" me-2" />
+                                <datalist id="Aeroport">
+
+                                    @foreach (var aeroport in @Model.Aeroports)
+                                    {
+                                        <option value="@aeroport.Name"></option>
+                                    }
+
+                                </datalist>
+
+                                le
+                            </p> <input type="datetime-local" name="HDepart" /> <p class="ms-3 me-3">
+                                et arriver à
+                                <input list="Aeroport" type="text" name="aero_arriver" class=" me-2" />
+                                <datalist id="Aeroport">
+
+                                    @foreach (var aeroport in @Model.Aeroports)
+                                    {
+                                        <option value="@aeroport.Name"></option>
+                                    }
+
+                                </datalist>
+
+                                le
+                            </p> <input type="datetime-local" name="HArriver" />
+                        </div>
+
+                        <div class="d-flex justify-content-center align-content-center align-items-center">
+                        </div>
+
+                        <input name="VolId" hidden />
+
+                        <div class="d-flex">
+                            <p>Pilote : <input list="Pilote" type="text" name="pilote" class=" me-2" /></p>
+                            <datalist id="Pilote">
+
+                                @foreach (var pilote in @Model.Pilotes)
+                                {
+                                    <option value="@pilote.Surname @pilote.Name"></option>
+                                }
+                            </datalist>
+
+                            <p>Helicoptère : <input list="Helicos" type="text" name="Helico" class=" me-2" /></p>
+                            <datalist id="Helicos">
+
+
+                                @foreach (var helico in @Model.Helicopteres)
+                                {
+                                    <option value="@helico.Id.@helico.Name"> Capacity : @helico.Capacity </option>
+                                }
+
+
+                            </datalist>
+
+                        </div>
+
+                        <div class="d-flex">
+                            <p>selectionner le/les jours si le vol est récurent (ctrl + click pour selection multiple) </p>
+                            <select class="w-25" list="jours" name="JoursRecurent" multiple>
+                                <option value="lundi">Lundi</option>
+                                <option value="mardi">Mardi</option>
+                                <option value="mercredi">Mercredi</option>
+                                <option value="jeudi">Jeudi</option>
+                                <option value="vendredi">Vendredi</option>
+                                <option value="samedi">Samedi</option>
+                                <option value="dimanche">Dimanche</option>
+                            </select>
+                        </div>
+
+
+                        <p class="mt-3">La récurence du vol commencera a la date de départ et se terminera a la date d'arrivée </p>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<h2 class="mt-5 mb-5">Vols Futur</h2>
+
+@foreach (var vol in @Model.VolsFutur)
+{
+
+    var depart = "error";
+    var arriver = "error";
+
+    @foreach (var aero in @Model.Aeroports)
+    {
+        if (aero.Id == vol.AeroportDepartId)
+        {
+            depart = aero.Name;
+        }
+
+        if (aero.Id == vol.AeroportArriverId)
+        {
+            arriver = aero.Name;
+        }
+
+    }
+
+    <div class="d-flex flex-column mb-3" data-toggle="modal" data-target="#staticBackdrop @vol.Id">
+        <div class="d-flex justify-content-center align-items-md-center"> <button class="fs-3 mt-3 btn_trans">Départ prévu de @depart le @vol.DepartPrevu et arriver à @arriver estimer au @vol.ArriverPrevu. Pilote : @vol.Pilote.Surname @vol.Pilote.Name</button></div>
+    </div>
+
+
+    <!-- Modal Futur-->
+    <div class="modal fade " id="staticBackdrop @vol.Id" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content text-black">
+                <div class="modal-header flex-column-reverse">
+                    <h1 class="modal-title" id="staticBackdropLabel">Modifier les informations de vol</h1>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-controller="Admin" asp-action="ListVols" method="post">
+
+                    <div class="modal-body d-flex justify-content-center align-items-center">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+
+
+
+                            <div class="d-flex justify-content-center align-content-center align-items-center">
+                                <p class="me-3">
+                                    Départ de
+                                    <input list="Aeroport" type="text" name="aero_depart" value="@depart" class=" me-2" />
+                                    <datalist id="Aeroport">
+
+                                        @foreach (var aeroport in @Model.Aeroports)
+                                        {
+                                            <option value="@aeroport.Name"></option>
+                                        }
+
+                                    </datalist>
+
+                                    le
+                                </p> <input type="datetime-local" name="HDepart" value="@vol.DepartPrevu.ToString("s")" /> <p class="ms-3 me-3">
+                                    et arriver à
+                                    <input list="Aeroport" type="text" name="aero_arriver" value="@arriver" class=" me-2" />
+                                    <datalist id="Aeroport">
+
+                                        @foreach (var aeroport in @Model.Aeroports)
+                                        {
+                                            <option value="@aeroport.Name"></option>
+                                        }
+
+                                    </datalist>
+
+                                    le
+                                </p> <input type="datetime-local" name="HArriver" value="@vol.ArriverPrevu.ToString("s")" />
+
+                            </div>
+
+                            <p>Distance : @vol.Distance km</p>
+
+                            <div class="d-flex justify-content-center align-content-center align-items-center">
+                            </div>
+
+                            <input value="@vol.Id" name="VolId" hidden />
+
+                            <div class="d-flex">
+                                <p>Pilote : <input list="Pilote" type="text" name="pilote" value="@vol.Pilote.Surname @vol.Pilote.Name" class=" me-2" /></p>
+                                <datalist id="Pilote">
+
+                                    @foreach (var pilote in @Model.Pilotes)
+                                    {
+                                        <option value="@pilote.Surname @pilote.Name"></option>
+                                    }
+                                </datalist>
+
+                                <p>Helicoptère : <input list="Helico @vol.Id" type="text" name="Helico" value="@vol.Helicopter.Id.@vol.Helicopter.Name" class=" me-2" /></p>
+                                <datalist id="Helico @vol.Id">
+
+                                    @if (@Model.HelicoptereVols.ContainsKey(@vol.Id))
+                                    {
+                                        @foreach (var helico in @Model.HelicoptereVols[@vol.Id])
+                                        {
+                                            <option value="@helico.Id.@helico.Name"> Capacity : @helico.Capacity </option>
+                                        }
+                                    }
+
+                                </datalist>
+
+                            </div>
+
+                            <a class="suppVolBtn" asp-controller="Admin" asp-action="SupprimerVol" asp-route-VolID="@vol.Id">Supprimer le vol</a>
+
+
+
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+}
+
+
+
+
+
+
+<h2 class="mt-5 mb-5">Vols Passer</h2>
+
+@foreach (var vol in @Model.VolsPasser)
+{
+
+    var depart = "error";
+    var arriver = "error";
+
+    @foreach (var aero in @Model.Aeroports)
+    {
+        if (aero.Id == vol.AeroportDepartId)
+        {
+            depart = aero.Name;
+        }
+
+        if (aero.Id == vol.AeroportArriverId)
+        {
+            arriver = aero.Name;
+        }
+
+    }
+
+    <div class="d-flex flex-column mb-3" data-toggle="modal" data-target="#staticBackdrop @vol.Id">
+        <div class="d-flex justify-content-center align-items-md-center"> <button class="fs-3 mt-3 btn_trans">Départ prévu de @depart le @vol.DepartPrevu et arriver à @arriver estimer au @vol.ArriverPrevu. Pilote : @vol.Pilote.Surname @vol.Pilote.Name</button></div>
+    </div>
+
+
+    <!-- Modal Passer -->
+    <div class="modal fade " id="staticBackdrop @vol.Id" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content text-black">
+                <div class="modal-header flex-column-reverse">
+                    <h1 class="modal-title" id="staticBackdropLabel">Compléter les informations de vol</h1>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+
+
+                        <div class="d-flex justify-content-center align-content-center align-items-center">
+                            <p class="me-3">Départ de @depart à @vol.DepartPrevu et arriver à @arriver à @vol.ArriverPrevu </p>
+                        </div>
+
+                        <div class="d-flex justify-content-center align-content-center align-items-center">
+                            <p class="me-3">Hélicoptère : @vol.Helicopter.Name capacity : @vol.Helicopter.Capacity </p>
+                        </div>
+
+                        <div class="d-flex justify-content-center align-content-center align-items-center">
+                            <p class="me-3">Pilote : @vol.Pilote.Surname @vol.Pilote.Name </p>
+                        </div>
+
+                        <div class="d-flex justify-content-center align-content-center align-items-center">
+                            <p class="me-3">Raison du possible retard :</p>
+                            <p>@vol.RaisonRetard</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+}

@@ -1,0 +1,55 @@
+﻿@using JITC.Models.ViewModel
+
+@model VolViewModel
+
+
+<h1>Rechercher un vol</h1>
+
+<form asp-controller="Home" asp-action="Vol" method="post">
+    <div class="d-flex mt-5">
+        <h2 class="me-2">Départ</h2>
+        <input list="Aeroport" type="text" name="aero_depart" class="me-2" />
+
+        <h2 class="me-2">Arriver</h2>
+        <input list="Aeroport" type="text" name="aero_arriver" class=" me-2" />
+        <datalist id="Aeroport">
+
+            @foreach (var aeroport in @Model.Aeroports)
+            {
+                <option value="@aeroport.Name" ></option>
+            }
+
+        </datalist>
+
+        <h2 class="me-2">Date</h2>
+        <input type="date" name="date" class="me-2" />
+
+        <button type="submit">Rechercher</button>
+
+    </div>
+</form>
+<div class="mt-5 d-flex flex-column ">
+
+    <h2 class="text-danger">@Model.Error</h2>
+
+    @if (@Model.Vols != null)
+    {
+        @foreach (var vol in @Model.Vols)
+        {
+            var depart = "null";
+            var arriver = "null";
+
+            @foreach (var aero in @Model.Aeroports)
+            {
+                @if (@vol.AeroportDepartId == aero.Id) { depart = aero.Name; }
+                @if (@vol.AeroportArriverId == aero.Id) { arriver = aero.Name; }
+            }
+
+            <a class="listVols" asp-controller="Vol" asp-action="Reservation" asp-route-VolID="@vol.Id">
+                De  @depart à  @arriver depart : @vol.DepartPrevu arriver : @vol.ArriverPrevu avec @vol.Pilote.Surname @vol.Pilote.Name
+            </a>
+        }
+
+    }
+
+</div>

@@ -1,0 +1,142 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - JITC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <environement include="Development">
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    </environement>
+
+    <environement exclude="Development">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
+    </environement>
+
+    <link rel="stylesheet" href="~/JITC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="brandNav" asp-area="" asp-controller="Home" asp-action="Index">JITC</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div>
+                    <ul class="navbar-nav flex-grow-1">
+
+                        @{
+                            if (SignInManager.IsSignedIn(User))
+                            {
+                                if (User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Profil"><i class="fa fa-user" aria-hidden="true"></i> Profil</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Admin" asp-action="Statistic"><i class="fa fa-bar-chart" aria-hidden="true"></i> Statistiques</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Admin" asp-action="ListVols"><i class="fa fa-plane" aria-hidden="true"></i>  Liste des vols</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Admin" asp-action="Appareils"><i class="fa fa-wrench" aria-hidden="true"></i>  Appareils</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="Identity" asp-page="/Account/Logout">LogOut <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                                    </li>
+                                }
+                                else if (User.IsInRole("Pilote"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Profil"><i class="fa fa-user" aria-hidden="true"></i> Profil</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Pilote" asp-action="MesVols"><i class="fa fa-plane" aria-hidden="true"></i> MesVols</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="Identity" asp-page="/Account/Logout">LogOut <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                                    </li>
+                                }
+                                else
+                                {
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Vol"><i class="fa fa-plane" aria-hidden="true"></i> Vols</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="" asp-controller="Home" asp-action="Profil"><i class="fa fa-user" aria-hidden="true"></i> Profil</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="menu" asp-area="Identity" asp-page="/Account/Logout">LogOut <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                                    </li>
+                                }
+
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="menu" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="menu" asp-area="" asp-controller="Home" asp-action="Vol"><i class="fa fa-plane" aria-hidden="true"></i> Vols</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="menu" asp-area="Identity" asp-page="/Account/Login">Se Connecter / s'enregistrer <i class="fa fa-sign-in" aria-hidden="true"></i></a>
+                                </li>
+
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - JITC
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

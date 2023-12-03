@@ -1,0 +1,71 @@
+﻿@using JITC.Models.ViewModel
+@using Microsoft.AspNetCore.Identity
+
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+
+<div class="text-center mb-5">
+    <h1 class="display-4">Just in Time Company</h1>
+</div>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (@Model.User.MessageAccueil != "")
+    {
+        <h2 class="text-warning">Des modification ont été apporter à l'une de vos réservation : </h2>
+       
+        @foreach( var message in @Model.User.MessageAccueil.Split('|'))
+        {
+            <h2 class="text-warning">- @message</h2>
+        }
+        
+    }
+
+}
+
+<h2 class="mt-5">Présentation de la compagnie</h2>
+
+<p>La just-in-time company© (JITC), consiste en une offre de transport de personnes par hélicoptère à travers la belgique.</p>
+
+<h2>Aéroports desservis</h2>
+
+@foreach (var aeroport in Model.Aeroports)
+{
+    <p> - @aeroport.Name</p>
+
+}
+
+<h2>Vols prévus</h2>
+
+@foreach (var vol in Model.Vols)
+{
+    <div class="d-flex">
+        @foreach (var aeroport in Model.Aeroports)
+        {
+            if (vol.AeroportDepartId == aeroport.Id)
+            {
+                <p class="me-1">@aeroport.Name - </p>
+            }
+        }
+
+        @foreach (var aeroport in Model.Aeroports)
+        {
+            if (vol.AeroportArriverId == aeroport.Id)
+            {
+                <p class="me-2"> @aeroport.Name </p>
+            }
+        }
+
+        <p>Départ : @vol.DepartPrevu ->  Arrivée : @vol.ArriverPrevu</p>
+
+    </div>
+
+
+}
+
